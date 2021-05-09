@@ -21,6 +21,25 @@ module.exports = gql`
         img: String 
     }
 
+    type Post {
+        _id: ID
+        createdAt: String
+        title: String
+        area: String
+        content: String
+        img: String
+        lat: Float
+        long: Float
+        poster: User
+        comments: [Comment]
+    }
+
+    type Comment {
+        text: String
+        cratedAt: String
+        poster: User
+    }
+
     type Query {
         me: User
     }
