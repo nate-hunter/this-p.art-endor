@@ -1,13 +1,29 @@
 body {
-  margin: 0;
+  /* margin: 0; */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #192734;
+  color: violet;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*
+COLORS:
+
+#f99595 - salmonish
+#15202B - Dark blue background  // For the app's body's main background (Darkmode)
+#192734 - Lighter blue accent // For background accents for divs, cards, etc. (Darkmode)
+#E0245E - Reddish-pinkish // For btns + links + icons + outlines  (Darkmode)
+lightskyblue - Sky Blue // For text + btnns + links + icons + outlines  (Darkmode + Lightmode?)
+#0488DD - Sky Blue // For text + btnns + links + icons + outlines  (Lightmode?)
+#008E7C - Darker Green
+#00A692 - Slightly Lighter Green
+#C2FEF7 - Lighter Green
+*/
