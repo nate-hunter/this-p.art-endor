@@ -19,7 +19,7 @@ export default function reducer(state, { type, payload }) {
         case "CREATE_DRAFT": 
             return {
                 ...state,
-                currentBaloon: null,
+                currentPost: null,
                 draft: {
                     latitude: 0,
                     longitude: 0
@@ -41,6 +41,7 @@ export default function reducer(state, { type, payload }) {
                 posts: payload
             }
         case "CREATE_POST":
+            console.log('CREATE_POST payload:', payload);
             const newPost = payload 
             const prevPosts = state.posts.filter(post => post._id !== newPost._id)
             return {
@@ -73,8 +74,12 @@ export default function reducer(state, { type, payload }) {
             }
         case "CREATE_COMMENT": 
             const updatedCurrentPost = payload;
+            console.log('payload:', payload)
+            console.log('state:', state)
+            let count = 1;
             const updatedPosts = state.posts.map(post => 
-                post._id === updatedCurrentPost._id ? updatedCurrentPost : post
+                {console.log(`post (${count++})`, post)
+                return post._id === updatedCurrentPost._id ? updatedCurrentPost : post}
             )
             return { 
                 ...state,

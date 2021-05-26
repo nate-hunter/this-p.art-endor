@@ -3,10 +3,9 @@ const Post = require('./models/Post');
 
 const pubsub = new PubSub();
 
-const POST_ADDED = "POST_ADDED";
+const POST_CREATED = "POST_CREATED";
 const POST_DELETED = "POST_DELETED";
 const POST_UPDATED = "POST_UPDATED";
-const COMMENT_CREATED = "COMMENT_CREATED";
 
 const user = {
     _id: "1",
@@ -38,9 +37,9 @@ module.exports = {
                 ...args.input,
                 poster: context.currentUser._id
             }).save();
-            const postAdded = await Post.populate(newPost, 'poster');
-
-            return postAdded
+            const postCreated = await Post.populate(newPost, 'poster');
+            pubsub.publish(POST_CREATED, { postCreated });
+            return postCreated;
 
         }),
         deletePost: authenticated(async (root, args, context) => {
@@ -53,16 +52,31 @@ module.exports = {
             const currentUser = context.currentUser._id;
             const newComment = { text: commentText, poster: currentUser};
             
-            const updatedPost = await Post.findOneAndUpdate(
+            const postUpdated = await Post.findOneAndUpdate(
                 { _id: args.postId },  //  Finds the post by the post's id
                 { $push: { comments: newComment }},  // Describes how to update the 'document'
                 { new: true }  // Returns the latest 'document'
             )
                 .populate('poster')
                 .populate('comments.poster');
-            // pubsub.publish(POST_UPDATED, { updatedPost });
-            return updatedPost;
+                console.log('post updated in mutation 1', postUpdated, { postUpdated })
+                pubsub.publish(POST_UPDATED, { postUpdated });
+                console.log('post updated in mutation 2', postUpdated, { postUpdated })
+            return postUpdated;
 
         })
+    },
+    Subscription: {  // Utilizes the 'publisher/subsriber' pattern
+        postCreated: {
+            subscribe: () => pubsub.asyncIterator(POST_CREATED)
+        },
+        postDeleted: {
+            subscribe: () => pubsub.asyncIterator(POST_DELETED)
+        },
+        postUpdated: {
+            subscribe: () => {
+                console.log('post updated')
+                return pubsub.asyncIterator(POST_UPDATED)}
+        }
     }
 }

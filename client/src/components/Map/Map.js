@@ -14,11 +14,9 @@ import Blog from '../Blog/Blog';
 import { useClient } from '../../client';
 import { GET_POSTS_QUERY } from '../../graphql/queries';
 import { DELETE_POST_MUTATION } from '../../graphql/mutations';
-// import { Subscription } from "react-apollo";
-// import { 
-//   BALOON_ADDED_SUBSCRIPTION, 
-//   BALOON_UPDATED_SUBSCRIPTION, 
-//   BALOON_DELETED_SUBSCRIPTION } from '../../graphql/subscriptions';
+
+import { Subscription } from "react-apollo";
+import { POST_CREATED_SUBSCRIPTION, POST_UPDATED_SUBSCRIPTION, POST_DELETED_SUBSCRIPTION } from '../../graphql/subscriptions';
 
 
 const API_TOKEN = ""; 
@@ -111,9 +109,12 @@ const Map = ({ classes }) => {
 
   const handleDeletePost = async post => {
     const variables = { postId: post._id };
-    const { deletePost } = await client.request(DELETE_POST_MUTATION, variables);
-    console.log('delete post payload', deletePost);
-    dispatch({ type: "DELETE_POST", payload: deletePost })
+    await client.request(DELETE_POST_MUTATION, variables);
+
+    // The below is not need w/subscriptions:
+    // const { deletePost } = await client.request(DELETE_POST_MUTATION, variables);
+    // dispatch({ type: "DELETE_POST", payload: deletePost })
+
     setPopup(null);
   }
 
@@ -205,9 +206,37 @@ const Map = ({ classes }) => {
                   </div>
                 </Popup>
               )}
-
-
           </ReactMapGL>
+
+          {/* Subscriptions for CREATING / UPDATING / DELETING Posts */}
+          <Subscription 
+            subscription={POST_CREATED_SUBSCRIPTION}
+            onSubscriptionData={({ subscriptionData }) => {
+              console.log('subscription data:', subscriptionData);
+              const { postCreated } = subscriptionData.data;
+              console.log("Post created (subscription):", postCreated)
+              dispatch({ type: "CREATE_POST", payload: postCreated })
+            }}
+          />
+
+          <Subscription 
+            subscription={POST_UPDATED_SUBSCRIPTION}
+            onSubscriptionData={({ subscriptionData }) => {
+              console.log('subscription data:', subscriptionData);
+              const { postUpdated } = subscriptionData.data;
+              console.log("Post updated (subscription):", postUpdated)
+              dispatch({ type: "CREATE_COMMENT", payload: postUpdated }) 
+            }}
+          />
+
+          <Subscription 
+            subscription={POST_DELETED_SUBSCRIPTION}
+            onSubscriptionData={({ subscriptionData }) => {
+              const { postDeleted } = subscriptionData.data;
+              console.log("Post deleted (subscription):", postDeleted)
+              dispatch({ type: "DELETE_POST", payload: postDeleted })
+            }}
+          />          
 
           {/* Blog Area to add Post content + comments */}
           <Blog />

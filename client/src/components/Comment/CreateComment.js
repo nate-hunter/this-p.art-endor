@@ -17,11 +17,15 @@ const CreateComment = ({ classes }) => {
   const [commentText, setCommentText] = useState("");
 
   const handleSubmitComment = async () => {
-    console.log('comment clicked:', commentText)
     const variables = { postId: state.currentPost._id, text: commentText };
-    const { createComment } = await client.request(CREATE_COMMENT_MUTATION, variables);
-    console.log('create comment payload:', createComment); // return Post from mutation?
-    dispatch({ type: "CREATE_COMMENT", payload: createComment})
+    console.log('variables:', variables)
+
+    await client.request(CREATE_COMMENT_MUTATION, variables);
+
+    // The below is not needed after adding Subscriptions:
+    // const { createComment } = await client.request(CREATE_COMMENT_MUTATION, variables);
+    // dispatch({ type: "CREATE_COMMENT", payload: createComment});
+
     setCommentText("");
   }
 

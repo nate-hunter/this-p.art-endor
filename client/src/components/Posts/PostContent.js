@@ -12,7 +12,7 @@ import CreateComment from '../Comment/CreateComment';
 import Comments from '../Comment/Comments';
 
 
-const BaloonContent = ({ classes }) => {
+const PostContent = ({ classes }) => {
   const { state } = useContext(Context);
   const { title, content, poster, createdAt, comments } = state.currentPost;
 
@@ -80,4 +80,4 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(BaloonContent);
+export default withStyles(styles)(PostContent);

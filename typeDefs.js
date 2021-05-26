@@ -59,4 +59,10 @@ module.exports = gql`
         createComment(postId: ID!, text: String!): Post
     }
 
+    type Subscription {
+        postCreated: Post
+        postDeleted: Post
+        postUpdated: Post
+    }
+
 `

@@ -11,7 +11,7 @@ import CreatePost from '../Posts/CreatePost';
 import PostContent from '../Posts/PostContent';
 
 
-const Blog = ({ classes }) => {
+const Blog = ({ classes }) => { 
   // const mobileSize = useMediaQuery('(max-width: 650px)');
   const { state } = useContext(Context);
   const { draft, currentPost } = state;

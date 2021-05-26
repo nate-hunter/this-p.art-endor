@@ -4,7 +4,7 @@ import ExploreIcon from "@material-ui/icons/Explore";
 import Typography from "@material-ui/core/Typography";
 
 
-const NoBaloonContent = ({ classes }) => (
+const NoPostContent = ({ classes }) => (
     <div className={classes.root}>
       <ExploreIcon className={classes.icon} />
       <Typography
@@ -34,4 +34,4 @@ const NoBaloonContent = ({ classes }) => (
     }
   });
   
-  export default withStyles(styles)(NoBaloonContent);
+  export default withStyles(styles)(NoPostContent);

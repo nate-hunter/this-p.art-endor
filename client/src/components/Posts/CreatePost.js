@@ -17,7 +17,7 @@ import { CREATE_POST_MUTATION } from '../../graphql/mutations';
 
 
 
-const CreateBaloon = ({ classes }) => {
+const CreatePost = ({ classes }) => {
     // const mobileSize = useMediaQuery('(max-width: 650px)');
     
     const client = useClient();
@@ -61,10 +61,12 @@ const CreateBaloon = ({ classes }) => {
                 lat: latitude,
                 lon: longitude
             }
-            console.log(variables)
+            await client.request(CREATE_POST_MUTATION, variables);
 
-            const { createPost } = await client.request(CREATE_POST_MUTATION, variables);
-            dispatch({ type: "CREATE_POST", payload: createPost })
+            // The below are not needed w/the implementation of subscriptions in the Map component.
+            // const { createPost } = await client.request(CREATE_POST_MUTATION, variables);
+            // dispatch({ type: "CREATE_POST", payload: createPost })
+
             handleDeleteDraft();
         } catch (err) {
             setSubmitting(false);
@@ -201,4 +203,4 @@ const CreateBaloon = ({ classes }) => {
     }
   });
   
-  export default withStyles(styles)(CreateBaloon);
+  export default withStyles(styles)(CreatePost);
