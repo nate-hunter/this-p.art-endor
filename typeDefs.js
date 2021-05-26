@@ -29,18 +29,34 @@ module.exports = gql`
         content: String
         img: String
         lat: Float
-        long: Float
+        lon: Float
         poster: User
         comments: [Comment]
     }
 
     type Comment {
         text: String
-        cratedAt: String
+        createdAt: String
         poster: User
     }
 
     type Query {
         me: User
+        getPosts: [Post!]
     }
+
+    input CreatePostInput {
+        title: String
+        content: String 
+        img: String
+        lat: Float
+        lon: Float
+    }
+
+    type Mutation {
+        createPost(input: CreatePostInput!): Post
+        deletePost(postId: ID!): Post 
+        createComment(postId: ID!, text: String!): Post
+    }
+
 `

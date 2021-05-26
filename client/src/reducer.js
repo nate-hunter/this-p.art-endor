@@ -19,7 +19,7 @@ export default function reducer(state, { type, payload }) {
         case "CREATE_DRAFT": 
             return {
                 ...state,
-                currentPin: null,
+                currentBaloon: null,
                 draft: {
                     latitude: 0,
                     longitude: 0
@@ -35,52 +35,52 @@ export default function reducer(state, { type, payload }) {
                 ...state,
                 draft: null
             }
-        // case "GET_PINS":
-        //     return {
-        //         ...state,
-        //         pins: payload
-        //     }
-        // case "CREATE_PIN":
-        //     const newPin = payload 
-        //     const prevPins = state.pins.filter(pin => pin._id !== newPin._id)
-        //     return {
-        //         ...state,
-        //         pins: [...prevPins, newPin]
+        case "GET_POSTS":
+            return {
+                ...state,
+                posts: payload
+            }
+        case "CREATE_POST":
+            const newPost = payload 
+            const prevPosts = state.posts.filter(post => post._id !== newPost._id)
+            return {
+                ...state,
+                posts: [...prevPosts, newPost]
 
-        //     }
-        // case "SET_PIN":
-        //     return {
-        //         ...state,
-        //         currentPin: payload,
-        //         draft: null
-        //     }
-        // case "DELETE_PIN":
-        //     const deletedPin = payload 
-        //     const filteredPins = state.pins.filter(pin => pin._id !== deletedPin._id)
-        //     if (state.currentPin) {
-        //         const isCurrentPin = deletedPin._id === state.currentPin._id 
-        //         if (isCurrentPin) {
-        //             return {
-        //                 ...state,
-        //                 pins: filteredPins
-        //             }
-        //         }
-        //     }
-        //     return {
-        //         ...state,
-        //         pins: filteredPins,
-        //         currentPin: null
-        //     }
-        // case "CREATE_COMMENT":
-        //     const updatedCurrentPin = payload;
-        //     const updatedPins = state.pins.map(pin => 
-        //         pin._id === updatedCurrentPin._id ? updatedCurrentPin : pin
-        //     )
-        //     return { 
-        //         ...state,
-        //         pins: updatedPins,
-        //         currentPin: updatedCurrentPin
-        //     };
+            }
+        case "SET_POST":
+            return {
+                ...state,
+                currentPost: payload,
+                draft: null
+            }
+        case "DELETE_POST":
+            const deletedPost = payload 
+            const filteredPosts = state.posts.filter(post => post._id !== deletedPost._id)
+            if (state.currentPost) {
+                const isCurrentPost = deletedPost._id === state.currentPost._id 
+                if (isCurrentPost) {
+                    return {
+                        ...state,
+                        posts: filteredPosts
+                    }
+                }
+            }
+            return {
+                ...state,
+                posts: filteredPosts,
+                currentPost: null
+            }
+        case "CREATE_COMMENT": 
+            const updatedCurrentPost = payload;
+            const updatedPosts = state.posts.map(post => 
+                post._id === updatedCurrentPost._id ? updatedCurrentPost : post
+            )
+            return { 
+                ...state,
+                posts: updatedPosts,
+                currentPost: updatedCurrentPost
+            };
         default:
             return state;
 

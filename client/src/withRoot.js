@@ -9,16 +9,18 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 // A theme with custom primary and secondary color.
 const theme = createMuiTheme({
     palette: {
-      primary: {
-        light: blueGrey[300],
-        main: blueGrey[500],
-        dark: blueGrey[700]
-      },
-      secondary: {
-        light: yellow[300],
-        main: yellow[500],
-        dark: yellow[700]
-      }
+      // primary: {
+      //   light: blueGrey[300],
+      //   main: blueGrey[500],
+      //   dark: blueGrey[700]
+      // },
+      primary: '#192734',
+      secondary: 'violet'
+      // secondary: {
+      //   light: yellow[300],
+      //   main: yellow[500],
+      //   dark: yellow[700]
+      // }
     },
     typography: {
       useNextVariants: true

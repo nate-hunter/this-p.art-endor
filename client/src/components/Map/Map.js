@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import ReactMapGL, { NavigationControl, Marker, Popup } from 'react-map-gl';
-// import differenceInMinutes from 'date-fns/difference_in_minutes';
+import differenceInMinutes from 'date-fns/difference_in_minutes';
 
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
@@ -8,17 +8,17 @@ import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 
-import PinIcon from './PinIcon';
+import Baloon from './BaloonIcon';
 import Context from '../../context';
-// import Blog from './Blog';
-// import { useClient } from '../client';
-// import { GET_PINS_QUERY } from '../graphql/queries';
-// import { DELETE_PIN_MUTATION } from '../graphql/mutations';
+import Blog from '../Blog/Blog';
+import { useClient } from '../../client';
+import { GET_POSTS_QUERY } from '../../graphql/queries';
+import { DELETE_POST_MUTATION } from '../../graphql/mutations';
 // import { Subscription } from "react-apollo";
 // import { 
-//   PIN_ADDED_SUBSCRIPTION, 
-//   PIN_UPDATED_SUBSCRIPTION, 
-//   PIN_DELETED_SUBSCRIPTION } from '../graphql/subscriptions';
+//   BALOON_ADDED_SUBSCRIPTION, 
+//   BALOON_UPDATED_SUBSCRIPTION, 
+//   BALOON_DELETED_SUBSCRIPTION } from '../../graphql/subscriptions';
 
 
 const API_TOKEN = ""; 
@@ -37,88 +37,182 @@ const INITIAL_VIEWPORT = {
 // }
 
 const Map = ({ classes }) => {
-    // const client = useClient();
-    // const mobileSize = useMediaQuery('(max-width: 650px)');
-    const { state, dispatch} = useContext(Context);
+  // const mobileSize = useMediaQuery('(max-width: 650px)');
+  const client = useClient();
+  const { state, dispatch} = useContext(Context);
 
-    
-    const [viewport, setViewport] = useState(INITIAL_VIEWPORT);
-    const [userPosition, setUserPosition] = useState(null);
-    
-    useEffect(() => {
-        getUserPosition()
-    }, []);
+  useEffect(() => {
+    getPosts();
+  }, []);
 
-    const getUserPosition = () => {
-    // console.log('navigator:', navigator)  
-      if ("geolocation" in navigator) {  // Take a look at this 'navigator' - it's pretty interesting;
-        navigator.geolocation.getCurrentPosition(position => {
-          const { latitude, longitude } = position.coords;
-          setViewport({ ...viewport, latitude, longitude });
-          setUserPosition({ latitude, longitude });
-        });
-      }
+  const [popup, setPopup] = useState(null);
+
+  // Remove popup for all when pin deleted by user:
+  useEffect(() => {
+    // const postExists = popup && state.posts.findIndex(post => post._id === popup._id) > -1
+    console.log('post exists')
+    
+    const postExists = popup && state.posts.findIndex(post => console.log('popup post? -', post))
+    console.log('popup:', postExists)
+    if (!postExists) {
+      setPopup(null);
     }
+  }, [state.posts.length])
 
-      const handleMapClick = ({ lngLat, leftButton }) => {  // LngLat + LeftButton from 'event'
-        if (!leftButton) return;
-        if (!state.draft) {
-          dispatch({ type: "CREATE_DRAFT" })
-        }
-        const [longitude, latitude] = lngLat;
-        dispatch({
-          type: "UPDATE_DRAFT_LOCATION",
-          payload: { longitude, latitude }
-        });
-      }
+  const [viewport, setViewport] = useState(INITIAL_VIEWPORT);
+  const [userPosition, setUserPosition] = useState(null);
+  
+  useEffect(() => {
+      getUserPosition()
+  }, []);
 
+  const getUserPosition = () => {
+  // console.log('navigator:', navigator)  
+    if ("geolocation" in navigator) {  // Take a look at this 'navigator' - it's pretty interesting;
+      navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+        setViewport({ ...viewport, latitude, longitude });
+        setUserPosition({ latitude, longitude });
+      });
+    }
+  }
+  
+  const getPosts = async () => {
+    console.log('endor')
+    const { getPosts } = await client.request(GET_POSTS_QUERY)
+    console.log('ewok', getPosts)
+    dispatch({ type: "GET_POSTS", payload: getPosts });
+    console.log('wahu')
+  }
 
-    return (
-        <div className={classes.root}>
-            <ReactMapGL
-                width="100vw"
-                height="calc(100vh - 64px)"  
-                mapStyle="mapbox://styles/mapbox/light-v10"
-                mapboxApiAccessToken={API_TOKEN}
-                onViewportChange={newViewport => setViewport(newViewport)}
-                onClick={handleMapClick}
-                // scrollZoom={!mobileSize}
-                {...viewport}
-            >
-                {/* Zoom Map */}
-                <div className={classes.navigationControl}>
-                    <NavigationControl
-                        onViewportChange={newViewport => setViewport(newViewport)}
-                    />
-                </div>
+  const handleMapClick = ({ lngLat, leftButton }) => {  // LngLat + LeftButton from 'event'
+    if (!leftButton) return;
+    if (!state.draft) {
+      dispatch({ type: "CREATE_DRAFT" })
+    }
+    const [longitude, latitude] = lngLat;
+    dispatch({
+      type: "UPDATE_DRAFT_LOCATION",
+      payload: { longitude, latitude }
+    });
+  }
 
-                {/* User Pin */}
-                {userPosition && (
-                    <Marker
-                        latitude={userPosition.latitude}
-                        longitude={userPosition.longitude}
-                        offsetLeft={-19}
-                        offsetTop={-37}
-                    >
-                        <PinIcon size={50} color="#008E7C" />
-                    </Marker>
-                )}
+  const highlightNewPost = post => {
+    const isNewPost = differenceInMinutes(Date.now(), Number(post.createdAt)) <= 10
+    return isNewPost ? "#192734" : "violet";
+  }
 
-                {/* Draft Pin  */}
-                {state.draft && (
+  const handleSelectPost = post => {
+    setPopup(post);
+    dispatch({ type: "SET_POST", payload: post });
+  }
+
+  const isAuthUser = () => state.currentUser._id === popup.poster._id
+
+  const handleDeletePost = async post => {
+    const variables = { postId: post._id };
+    const { deletePost } = await client.request(DELETE_POST_MUTATION, variables);
+    console.log('delete post payload', deletePost);
+    dispatch({ type: "DELETE_POST", payload: deletePost })
+    setPopup(null);
+  }
+
+  return (
+      <div className={classes.root}>
+          <ReactMapGL
+              width="100vw"
+              height="calc(100vh - 64px)"  
+              mapStyle="mapbox://styles/mapbox/light-v10"
+              mapboxApiAccessToken={API_TOKEN}
+              onViewportChange={newViewport => setViewport(newViewport)}
+              onClick={handleMapClick}
+              // scrollZoom={!mobileSize}
+              {...viewport}
+          >
+              {/* Zoom Map */}
+              <div className={classes.navigationControl}>
+                  <NavigationControl
+                      onViewportChange={newViewport => setViewport(newViewport)}
+                  />
+              </div>
+
+              {/* User Baloon */}
+              {userPosition && (
                   <Marker
-                    latitude={state.draft.latitude}
-                    longitude={state.draft.longitude}
-                    offsetLeft={-19}
-                    offsetTop={-37}
+                      latitude={userPosition.latitude}
+                      longitude={userPosition.longitude}
+                      offsetLeft={-19}
+                      offsetTop={-37}
                   >
-                    <PinIcon size={50} color="grey" />
+                      <Baloon size={50} color="#008E7C" />
                   </Marker>
+              )}
 
-                )}
-            </ReactMapGL>
-        </div>
-    );
+              {/* Draft Baloon  */}
+              {state.draft && (
+                <Marker
+                  latitude={state.draft.latitude}
+                  longitude={state.draft.longitude}
+                  offsetLeft={-19}
+                  offsetTop={-37}
+                >
+                  <Baloon size={50} color="grey" />
+                </Marker>
+
+              )}
+
+              {/* Previously added Posts  */}
+              {state.posts.map(post => (
+                <Marker
+                  key={post._id}
+                  latitude={post.lat}
+                  longitude={post.lon}
+                  offsetLeft={-19}
+                  offsetTop={-37}
+                >
+                  <Baloon
+                    onClick={() => handleSelectPost(post)} 
+                    size={50} 
+                    color={highlightNewPost(post)} 
+                  />
+                </Marker>
+              ))}
+
+              {/* Popup  */}
+              {popup && (
+                <Popup
+                  anchor="top"
+                  latitude={popup.lat}
+                  longitude={popup.lon}
+                  closeOnClick={false}
+                  onClose={() => setPopup(null)}
+                >
+                  <img 
+                    className={classes.popupImage}
+                    src={popup.img}
+                    alt={popup.title}
+                  />
+                  <div className={classes.popupTab}>
+                    <Typography>
+                      {/* {popup.title} */}
+                      {popup.lat.toFixed(6)}, {popup.lon.toFixed(6)}
+                    </Typography>
+                    {isAuthUser() && (
+                      <Button onClick={() => handleDeletePost(popup)}>
+                        <DeleteIcon className={classes.deleteIcon} />
+                      </Button>
+                    )}
+                  </div>
+                </Popup>
+              )}
+
+
+          </ReactMapGL>
+
+          {/* Blog Area to add Post content + comments */}
+          <Blog />
+      </div>
+  );
 }
 
 const styles = {

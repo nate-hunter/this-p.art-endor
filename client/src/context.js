@@ -1,12 +1,12 @@
 import { createContext } from 'react';
 
 
-const Context = createContext({
+const Context = createContext({ 
     currentUser: null,
     isAuth: false,
-    draft: null
-    // pins: [],
-    // currentPost: null
+    draft: null,
+    posts: [],
+    currentPost: null
 })
 
 

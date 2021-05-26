@@ -19,7 +19,7 @@ exports.findOrCreateUser = async token => {
 
     // 1:
     // const googleUser = await verifyAuthToken(token);
-    console.log('test token', token)
+    // console.log('test token', token)
     const testUser = token === 'test-id-token' ? testPandaUser : null; 
     if (testUser) testUser.email = 'testPandaUser@panda.com'
 
