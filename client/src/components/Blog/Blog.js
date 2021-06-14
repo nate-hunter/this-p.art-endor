@@ -12,7 +12,7 @@ import PostContent from '../Posts/PostContent';
 
 
 const Blog = ({ classes }) => { 
-  // const mobileSize = useMediaQuery('(max-width: 650px)');
+  const mobileSize = useMediaQuery('(max-width: 650px)');
   const { state } = useContext(Context);
   const { draft, currentPost } = state;
 
@@ -28,9 +28,9 @@ const Blog = ({ classes }) => {
   }
 
   return (
-    // <Paper className={mobileSize ? classes.rootMobile : classes.root}>
-    // <div className="blog-area">
-    <Paper className={classes.root}>
+    <Paper className={mobileSize ? classes.rootMobile : classes.root}>
+    {/* <div className="blog-area"> */}
+    {/* <Paper className={classes.root}> */}
       <BlogContent />
     </Paper>
   );
@@ -51,7 +51,8 @@ const styles = {
     maxWidth: "100%",
     maxHeight: 300,
     overflowX: "hidden",
-    overflowY: "scroll"
+    overflowY: "scroll",
+    backgroundColor: "#008E7C"
   }
 };
 

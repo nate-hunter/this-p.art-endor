@@ -56,21 +56,21 @@ export default function reducer(state, { type, payload }) {
                 draft: null
             }
         case "DELETE_POST":
-            const deletedPost = payload 
-            const filteredPosts = state.posts.filter(post => post._id !== deletedPost._id)
+            const deletedPost = payload; 
+            const filteredPosts = state.posts.filter(post => post._id !== deletedPost._id);
             if (state.currentPost) {
                 const isCurrentPost = deletedPost._id === state.currentPost._id 
                 if (isCurrentPost) {
                     return {
                         ...state,
-                        posts: filteredPosts
-                    }
+                        posts: filteredPosts,
+                        currentPost: null
+                    };
                 }
             }
             return {
                 ...state,
-                posts: filteredPosts,
-                currentPost: null
+                posts: filteredPosts
             }
         case "CREATE_COMMENT": 
             const updatedCurrentPost = payload;

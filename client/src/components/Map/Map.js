@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 
+import { API_TOKEN } from "../../constants";
 import Baloon from './BaloonIcon';
 import Context from '../../context';
 import Blog from '../Blog/Blog';
@@ -19,7 +20,6 @@ import { Subscription } from "react-apollo";
 import { POST_CREATED_SUBSCRIPTION, POST_UPDATED_SUBSCRIPTION, POST_DELETED_SUBSCRIPTION } from '../../graphql/subscriptions';
 
 
-const API_TOKEN = ""; 
 
 const INITIAL_VIEWPORT = {  
     // NYC:
@@ -35,7 +35,7 @@ const INITIAL_VIEWPORT = {
 // }
 
 const Map = ({ classes }) => {
-  // const mobileSize = useMediaQuery('(max-width: 650px)');
+  const mobileSize = useMediaQuery('(max-width: 650px)');
   const client = useClient();
   const { state, dispatch} = useContext(Context);
 
@@ -47,11 +47,11 @@ const Map = ({ classes }) => {
 
   // Remove popup for all when pin deleted by user:
   useEffect(() => {
-    // const postExists = popup && state.posts.findIndex(post => post._id === popup._id) > -1
-    console.log('post exists')
+    const postExists = popup && state.posts.findIndex(post => post._id === popup._id) > -1;
+    console.log('post exists');
     
-    const postExists = popup && state.posts.findIndex(post => console.log('popup post? -', post))
-    console.log('popup:', postExists)
+    // const postExists = popup && state.posts.findIndex(post => console.log('popup post? -', post))
+    console.log('popup:', postExists);
     if (!postExists) {
       setPopup(null);
     }
@@ -119,7 +119,9 @@ const Map = ({ classes }) => {
   }
 
   return (
-      <div className={classes.root}>
+      // <div className={classes.root}>
+      <div className={mobileSize ? classes.rootMobile : classes.root}>
+
           <ReactMapGL
               width="100vw"
               height="calc(100vh - 64px)"  
@@ -127,7 +129,7 @@ const Map = ({ classes }) => {
               mapboxApiAccessToken={API_TOKEN}
               onViewportChange={newViewport => setViewport(newViewport)}
               onClick={handleMapClick}
-              // scrollZoom={!mobileSize}
+              scrollZoom={!mobileSize}
               {...viewport}
           >
               {/* Zoom Map */}

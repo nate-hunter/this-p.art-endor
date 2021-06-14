@@ -55,4 +55,4 @@ const createNewUser = testUser => {
     const { username, email, img } = testUser;
     const user = { username, email, img };
     return new User(user).save();
-}
+} 

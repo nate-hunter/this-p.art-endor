@@ -18,7 +18,7 @@ import { CREATE_POST_MUTATION } from '../../graphql/mutations';
 
 
 const CreatePost = ({ classes }) => {
-    // const mobileSize = useMediaQuery('(max-width: 650px)');
+    const mobileSize = useMediaQuery('(max-width: 650px)');
     
     const client = useClient();
 
@@ -124,7 +124,7 @@ const CreatePost = ({ classes }) => {
             name="content"
             label="Content"
             multiline
-            // rows={mobileSize ? "3" : "6"}
+            rows={mobileSize ? "3" : "6"}
             rows={"6"}
             margin="normal"
             fullWidth

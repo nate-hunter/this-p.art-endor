@@ -7,7 +7,7 @@ const { findOrCreateUser } = require('./controllers/userController');
 
 require('dotenv').config();
 
-mongoose
+mongoose 
     .connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -24,7 +24,7 @@ const server = new ApolloServer({
         let currentUser = null;
         try {
             authToken = req.headers.authorization;
-            // console.log('req', req.headers);
+            console.log('req', req.headers);
             if (authToken) {
                 // find or create user:
                 currentUser = await findOrCreateUser(authToken);

@@ -30,7 +30,7 @@ module.exports = {
             // console.log('posts:', posts)
             return posts;
         }
-    },
+    }, 
     Mutation: {
         createPost: authenticated(async (root, args, context, info) => {
             const newPost = await new Post({

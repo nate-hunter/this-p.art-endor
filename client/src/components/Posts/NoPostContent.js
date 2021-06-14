@@ -6,7 +6,8 @@ import Typography from "@material-ui/core/Typography";
 
 const NoPostContent = ({ classes }) => (
     <div className={classes.root}>
-      <ExploreIcon className={classes.icon} />
+      {/* <ExploreIcon className={classes.icon} /> */}
+      (Click icon here?)
       <Typography
         // noWrap
         component="h2"
